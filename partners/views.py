@@ -4,6 +4,11 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
 
+
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
+
 import qrcode
 import json
 import base64
@@ -19,6 +24,17 @@ class PartnersViewSet(ModelViewSet):
     serializer_class = PartnerSerializer
 
 
+    @swagger_auto_schema(
+        method='post',
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'points_to_spend': openapi.Schema(type=openapi.TYPE_INTEGER),
+            },
+            required=['points_to_spend'],
+        ),
+        operation_summary='Снятие баллов'
+    )
     @action(detail=True, methods=['post'])
     def spend_points(self, request, pk=None):
         try:

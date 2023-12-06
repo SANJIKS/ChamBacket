@@ -7,6 +7,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
 from django.http import HttpResponse
+
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
 from .models import Backet
 from .serializers import BackerSerializer
 
@@ -14,8 +18,27 @@ class BacketViewSet(ModelViewSet):
     queryset = Backet.objects.all()
     serializer_class = BackerSerializer
 
+    @swagger_auto_schema(
+        method='post',
+        responses={
+            200: 'Points added successfully',
+            400: 'Invalid number of bottles or Invalid user token or No active points to add or invalid hash',
+            500: 'Internal Server Error',
+        },
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'num_bottles': openapi.Schema(type=openapi.TYPE_INTEGER),
+            },
+            required=['num_bottles'],
+        ),
+        operation_summary='Добавление бутылок и генерация QR-кода.'
+    )
     @action(detail=True, methods=['post'])
     def add_bottles(self, request, pk=None):
+        """
+        Добавление бутылок и генерация QR-кода.
+        """
         try:
             num_bottles = int(request.data.get('num_bottles', 0))
             if num_bottles > 0:
@@ -52,8 +75,28 @@ class BacketViewSet(ModelViewSet):
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 
+    @swagger_auto_schema(
+        method='post',
+        responses={
+            200: 'Points added successfully',
+            400: 'Invalid user token or No active points to add or invalid hash',
+            500: 'Internal Server Error',
+        },
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'hash_value': openapi.Schema(type=openapi.TYPE_STRING),
+                # 'user_token': openapi.Schema(type=openapi.TYPE_STRING),
+            },
+            required=['hash_value'],
+        ),
+        operation_summary='Сканирование QR-кода и начисление баллов пользователю.'
+    )
     @action(detail=False, methods=['post'])
     def scan_qr_code(self, request):
+        """
+        Сканирование QR-кода и начисление баллов пользователю.
+        """
         try:
             # Получаем данные из запроса
             hash_value = request.data.get('hash_value', '')
