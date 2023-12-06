@@ -20,7 +20,7 @@ class BacketViewSet(ModelViewSet):
             num_bottles = int(request.data.get('num_bottles', 0))
             if num_bottles > 0:
                 backet = self.get_object()
-                backet.active_points += num_bottles * 5  # Предполагаем 5 баллов за бутылку
+                backet.active_points += num_bottles
 
                 # Генерация токена
                 token_data = f"{backet.id}-{num_bottles}"  # Пример данных, которые могут быть включены в токен

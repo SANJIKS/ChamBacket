@@ -187,7 +187,15 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:4200',
 ]
 
-
+ALLOWED_HOSTS = [
+    '34.42.76.25',
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'http://localhost:3001',
+    'http://127.0.0.1:3001',
+    'http://127.0.0.1:8000',
+    'http://localhost:4200',
+]
 
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
